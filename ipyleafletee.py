@@ -7,27 +7,30 @@ from traitlets import Unicode
 
 ee.Initialize()
 
-class TileLayerEE(ipyleaflet.TileLayer):
+def getTileLayerUrl(map_id):
+  template = "https://earthengine.googleapis.com/map/{mapid}/{{z}}/{{x}}/{{y}}?token={token}"
+  return template.format(**map_id)
+
+class TileLayerEE(ipyleaflet.TileLayer):    
     map_id = (
-        ee.Image('NOAA/NGDC/ETOPO1')
-          .select('bedrock')
-          .sldStyle("""
-            <RasterSymbolizer>\
-              <ColorMap>\
-                <ColorMapEntry color="#000033" quantity="-8000" label="deep" />\
-                <ColorMapEntry color="#aaaaaa" quantity="-1" label="shallow" />\
-                <ColorMapEntry color="#000000" quantity="0" label="Land" />\
-                <ColorMapEntry color="#FFFFFF" quantity="4000" label="Land" />\
-              </ColorMap>\
-            </RasterSymbolizer>
-          """).getMapId()
+      ee.Image('NOAA/NGDC/ETOPO1')
+        .select('bedrock')
+        .sldStyle("""
+          <RasterSymbolizer>\
+            <ColorMap>\
+              <ColorMapEntry color="#000033" quantity="-8000" label="deep" />\
+              <ColorMapEntry color="#aaaaaa" quantity="-1" label="shallow" />\
+              <ColorMapEntry color="#000000" quantity="0" label="Land" />\
+              <ColorMapEntry color="#FFFFFF" quantity="4000" label="Land" />\
+            </ColorMap>\
+          </RasterSymbolizer>
+        """).getMapId()
     )
     
     url = Unicode(
         "https://earthengine.googleapis.com/map/{mapid}/{{z}}/{{x}}/{{y}}?token={token}".format(**map_id)
     ).tag(sync=True)
     attribution = Unicode('Map data <a href="https://www.ngdc.noaa.gov/mgg/global/seltopo.html">NOAA</a>').tag(sync=True, o=True)
-    pass
 
 
 class Map(ipyleaflet.Map):
